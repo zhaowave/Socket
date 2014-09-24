@@ -15,6 +15,23 @@ typedef struct syninfo{
 	char *key;
 	char *value;
 }syninfo;
+void getServerIp(){
+	FILE* conf = fopen("./ipconf.conf","r");
+	if(conf == NULL) {
+		printf("file open error\n");
+		exit(0);
+	}
+	char line[100];
+	while(fgets(line,100,conf)){
+		if(strlen(line) < 9) continue;
+		int idx;
+		for(idx = 1;line[idx] != '=';idx++);
+		idx++;
+		while(line[idx] == ' ') idx++;
+		for(idx;idx<strlen(line)&&line[idx]!='\n';idx++) putchar(line[idx]);
+	}
+
+}
 void synMethod(char* k,char* v){
 	syninfo syn;
 	char *key = k;
@@ -49,6 +66,7 @@ int main(){
 	
 	char *key = "hello";
 	char *value = "world";
-	synMethod(key ,value);
+//	synMethod(key ,value);
+	getServerIp();
 	return 0;
 }
