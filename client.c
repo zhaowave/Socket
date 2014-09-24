@@ -39,8 +39,8 @@ void synMethod(){
 	
 	send(client_sock, &keylen, sizeof(keylen),0);
 	send(client_sock, syn.key, keylen,0);
-	//send(client_sock, , ,0);
-	//send(client_sock, , ,0);
+	send(client_sock, &vallen, sizeof(vallen),0);
+	send(client_sock, syn.value, vallen,0);
 	close(client_sock);
 }
 
