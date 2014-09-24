@@ -16,6 +16,7 @@ typedef struct syninfo{
 	char *value;
 }syninfo;
 void synEvent(){
+	syninfo syn;
 	int server_sock = socket(AF_INET,SOCK_STREAM,0);
 	struct sockaddr_in server_address;
 	server_address.sin_family = AF_INET;
@@ -38,16 +39,15 @@ void synEvent(){
 	}
 	int keylen;
 	int len = recv(conn, &keylen, sizeof(keylen), 0);
-	printf("%d\n",keylen);
-	char *key = malloc(keylen);
-	len = recv(conn,key,keylen,0);
-	printf("%s\n",key);
+	syn.key = malloc(keylen);
+	len = recv(conn,syn.key,keylen,0);
+	printf("syn.key:%s\n",syn.key);
 	int vallen;
 	len = recv(conn, &vallen, sizeof(vallen), 0);
-	printf("%d\n",vallen);
-	char *value = malloc(vallen);
-	len = recv(conn,value,vallen,0);
-	printf("%s\n",value);
+	syn.value = malloc(vallen);
+	len = recv(conn,syn.value,vallen,0);
+	printf("syn.value:%s\n",syn.value);
+	//recv over , write into cache,next step 
 }
 
 int main(){

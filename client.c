@@ -15,10 +15,10 @@ typedef struct syninfo{
 	char *key;
 	char *value;
 }syninfo;
-void synMethod(){
+void synMethod(char* k,char* v){
 	syninfo syn;
-	char *key = "hello";
-	char *value = "world";
+	char *key = k;
+	char *value = v;
 	int keylen = strlen(key);
 	int vallen = strlen(value);
 	syn.key = malloc(keylen);
@@ -45,6 +45,10 @@ void synMethod(){
 }
 
 int main(){
-	synMethod();
+	//if(call change cache method)
+	
+	char *key = "hello";
+	char *value = "world";
+	synMethod(key ,value);
 	return 0;
 }
