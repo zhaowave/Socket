@@ -24,6 +24,7 @@ void getServerIp(){
 	char line[100];
 	while(fgets(line,100,conf)){
 		if(strlen(line) < 9) continue;
+		if(line[0] == '#') continue;
 		int idx;
 		for(idx = 1;line[idx] != '=';idx++);
 		idx++;
@@ -33,6 +34,8 @@ void getServerIp(){
 
 }
 void *synMethod(void *arg){
+	char *ip = (char*)arg;
+	printf("%s\n",ip);
 	char *k = "hello";
 	char *v = "world";
 	syninfo syn;
@@ -50,7 +53,7 @@ void *synMethod(void *arg){
 	memset(&server_address,0,sizeof(server_address));
 	server_address.sin_family = AF_INET;
 	server_address.sin_port = htons(5555);
-	server_address.sin_addr.s_addr = inet_addr("127.0.0.1");
+	server_address.sin_addr.s_addr = inet_addr(ip);
 	if(connect(client_sock,(struct sockaddr*)&server_address,sizeof(server_address)) < 0){
 		perror("connect fail\n");
 		exit(1);
@@ -64,11 +67,17 @@ void *synMethod(void *arg){
 	return ((void*)0);
 }
 void synByThreads(){
-	int server_nums = 5;
+	int server_nums = 4;
+	int n;
+	char *ip[4];
+	for(n = 0;n<4;n++){
+		ip[n] = malloc(sizeof(char)*16);
+		strcpy(ip[n],"127.0.0.1");
+	}
 	pthread_t *p_serv = malloc(sizeof(pthread_t)*server_nums);
 	int i = 0,err;
 	for(;i<server_nums;i++){
-		err = pthread_create(p_serv+i,NULL,synMethod,NULL);
+		err = pthread_create(p_serv+i,NULL,synMethod,ip[i]);
 		if(err != 0) printf("create p_server%d error\n",i);
 	}
 }
