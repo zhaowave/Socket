@@ -32,21 +32,24 @@ void synEvent(){
 	}
 	struct sockaddr_in client_address;
 	socklen_t length = sizeof(client_address);
-	int conn = accept(server_sock,(struct sockaddr*)&client_address,&length);
-	if(conn < 0){
-		perror("accept fail\n");
-		exit(1);
+
+	while(1){
+		int conn = accept(server_sock,(struct sockaddr*)&client_address,&length);
+		if(conn < 0){
+			perror("accept fail\n");
+			exit(1);
+		}
+		int keylen;
+		int len = recv(conn, &keylen, sizeof(keylen), 0);
+		syn.key = malloc(keylen);
+		len = recv(conn,syn.key,keylen,0);
+		printf("syn.key:%s\n",syn.key);
+		int vallen;
+		len = recv(conn, &vallen, sizeof(vallen), 0);
+		syn.value = malloc(vallen);
+		len = recv(conn,syn.value,vallen,0);
+		printf("syn.value:%s\n",syn.value);
 	}
-	int keylen;
-	int len = recv(conn, &keylen, sizeof(keylen), 0);
-	syn.key = malloc(keylen);
-	len = recv(conn,syn.key,keylen,0);
-	printf("syn.key:%s\n",syn.key);
-	int vallen;
-	len = recv(conn, &vallen, sizeof(vallen), 0);
-	syn.value = malloc(vallen);
-	len = recv(conn,syn.value,vallen,0);
-	printf("syn.value:%s\n",syn.value);
 	//recv over , write into cache,next step 
 }
 

@@ -67,7 +67,7 @@ void *synMethod(void *arg){
 	return ((void*)0);
 }
 void synByThreads(){
-	int server_nums = 4;
+	int server_nums = 1;
 	int n;
 	char *ip[4];
 	for(n = 0;n<4;n++){
