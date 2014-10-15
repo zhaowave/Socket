@@ -10,23 +10,48 @@
 #include<arpa/inet.h>
 #include<stdlib.h>
 #include<sys/socket.h>
-
+#define QUEUE 10
+#define PORT 9000
 typedef struct syninfo{
 	char *key;
 	char *value;
 }syninfo;
+void recvDate(int conn){
+		int recvlen = 0;
+		int len = recv(conn, &recvlen, sizeof(int), 0);
+		//len = recv(conn,&recvlen,sizeof(int),0);
+		char *recvBuffer = malloc(recvlen);
+		len = recv(conn,recvBuffer,recvlen,0);
+		int kLen,vLen;
+		char *k,*v;
+		memcpy(&kLen,recvBuffer,sizeof(int));
+		recvBuffer += sizeof(int);
+		
+		k = malloc(kLen);
+		memcpy(k,recvBuffer,kLen);
+		recvBuffer += kLen;
+		
+		memcpy(&vLen,recvBuffer,sizeof(int));
+		recvBuffer += sizeof(int);
+
+		v = malloc(vLen);
+		memcpy(v,recvBuffer,vLen);
+
+		printf("k:%s--v:%s\n",k,v);
+
+}
 void synEvent(){
 	syninfo syn;
 	int server_sock = socket(AF_INET,SOCK_STREAM,0);
 	struct sockaddr_in server_address;
 	server_address.sin_family = AF_INET;
-	server_address.sin_port = htons(5555);
+	server_address.sin_port = htons(PORT);
 	server_address.sin_addr.s_addr = htonl(INADDR_ANY);
 	if(bind( server_sock,(struct sockaddr*)&server_address,sizeof(server_address) ) == -1){
 		perror("bind fail\n");
 		exit(1);
 	}
-	if(listen(server_sock,10) == -1){
+	if(listen(server_sock,QUEUE) == -1){
 		perror("listen fail\n");
 		exit(1);
 	}
@@ -39,20 +64,41 @@ void synEvent(){
 			perror("accept fail\n");
 			exit(1);
 		}
-		int keylen;
-		int len = recv(conn, &keylen, sizeof(keylen), 0);
-		syn.key = malloc(keylen);
-		len = recv(conn,syn.key,keylen,0);
-		printf("syn.key:%s\n",syn.key);
-		int vallen;
-		len = recv(conn, &vallen, sizeof(vallen), 0);
-		syn.value = malloc(vallen);
-		len = recv(conn,syn.value,vallen,0);
-		printf("syn.value:%s\n",syn.value);
+		recvDate(conn);
+		/*
+		int recvlen = 0;
+		int len = recv(conn, &recvlen, sizeof(int), 0);
+		//len = recv(conn,&recvlen,sizeof(int),0);
+		char *recvBuffer = malloc(recvlen);
+		len = recv(conn,recvBuffer,recvlen,0);
+		int kLen,vLen;
+		char *k,*v;
+		memcpy(&kLen,recvBuffer,sizeof(int));
+		recvBuffer += sizeof(int);
+		
+		k = malloc(kLen);
+		memcpy(k,recvBuffer,kLen);
+		recvBuffer += kLen;
+		
+		memcpy(&vLen,recvBuffer,sizeof(int));
+		recvBuffer += sizeof(int);
+
+		v = malloc(vLen);
+		memcpy(v,recvBuffer,vLen);
+
+		printf("k:%s--v:%s\n",k,v);
+*/		//printf("---buffer----%s\n",recvBuffer);
+		//syn.key = malloc(keylen);
+		//len = recv(conn,syn.key,keylen,0);
+		//printf("syn.key:%s\n",syn.key);
+		//int vallen;
+		//len = recv(conn, &vallen, sizeof(vallen), 0);
+		//syn.value = malloc(vallen);
+		//len = recv(conn,syn.value,vallen,0);
+		//printf("syn.value:%s\n",syn.value);
 	}
 	//recv over , write into cache,next step 
 }
-
 int main(){
 	synEvent();	
 	return 0;
