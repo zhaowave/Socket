@@ -1,0 +1,9 @@
+server:server.o eventListen.o
+	gcc -o server server.o eventListen.o -levent
+server.o:server.c
+	gcc -c server.c 
+eventListen.o:eventListen.c
+	gcc -c eventListen.c -levent
+clean:
+	rm *.o server
+

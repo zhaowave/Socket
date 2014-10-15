@@ -1,6 +1,8 @@
-server:server.o
-	gcc -o server server.o
-server.o:server.c
-	gcc -c server.c
-clean:
-	rm *.o server
+clientmain:readXmlFile.o client.o clientmain.o
+	gcc -o clientmain clientmain.o client.o readXmlFile.o -lpthread -lxml2
+clientmain.o:clientmain.c
+	gcc -c clientmain.c
+client.o:client.c 
+	gcc -c client.c -lpthread
+readXmlFile.o:readXmlFile.c
+	gcc -c readXmlFile.c -I /usr/include/libxml2

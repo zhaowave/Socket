@@ -10,13 +10,16 @@
 #include<arpa/inet.h>
 #include<stdlib.h>
 #include<sys/socket.h>
+#include "server.h"
+#include "eventListen.h"
+
 #define QUEUE 10
 #define PORT 9000
 typedef struct syninfo{
 	char *key;
 	char *value;
 }syninfo;
-void recvDate(int conn){
+void recvData(int conn){
 		int recvlen = 0;
 		int len = recv(conn, &recvlen, sizeof(int), 0);
 		//len = recv(conn,&recvlen,sizeof(int),0);
@@ -38,7 +41,6 @@ void recvDate(int conn){
 		memcpy(v,recvBuffer,vLen);
 
 		printf("k:%s--v:%s\n",k,v);
-
 }
 void synEvent(){
 	syninfo syn;
@@ -55,6 +57,8 @@ void synEvent(){
 		perror("listen fail\n");
 		exit(1);
 	}
+	eventListen(server_sock);
+	/*
 	struct sockaddr_in client_address;
 	socklen_t length = sizeof(client_address);
 
@@ -64,39 +68,7 @@ void synEvent(){
 			perror("accept fail\n");
 			exit(1);
 		}
-		recvDate(conn);
-		/*
-		int recvlen = 0;
-		int len = recv(conn, &recvlen, sizeof(int), 0);
-		//len = recv(conn,&recvlen,sizeof(int),0);
-		char *recvBuffer = malloc(recvlen);
-		len = recv(conn,recvBuffer,recvlen,0);
-		int kLen,vLen;
-		char *k,*v;
-		memcpy(&kLen,recvBuffer,sizeof(int));
-		recvBuffer += sizeof(int);
-		
-		k = malloc(kLen);
-		memcpy(k,recvBuffer,kLen);
-		recvBuffer += kLen;
-		
-		memcpy(&vLen,recvBuffer,sizeof(int));
-		recvBuffer += sizeof(int);
-
-		v = malloc(vLen);
-		memcpy(v,recvBuffer,vLen);
-
-		printf("k:%s--v:%s\n",k,v);
-*/		//printf("---buffer----%s\n",recvBuffer);
-		//syn.key = malloc(keylen);
-		//len = recv(conn,syn.key,keylen,0);
-		//printf("syn.key:%s\n",syn.key);
-		//int vallen;
-		//len = recv(conn, &vallen, sizeof(vallen), 0);
-		//syn.value = malloc(vallen);
-		//len = recv(conn,syn.value,vallen,0);
-		//printf("syn.value:%s\n",syn.value);
-	}
+		recvDate(conn);*/
 	//recv over , write into cache,next step 
 }
 int main(){
