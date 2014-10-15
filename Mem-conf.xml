@@ -1,0 +1,9 @@
+<root>
+	<serverip>
+		<ip>127.0.0.1:9000</ip>
+		<ip>10.103.240.104:9000</ip>
+	</serverip>
+	<hash>
+		<size>100</size>
+	</hash>
+</root>
