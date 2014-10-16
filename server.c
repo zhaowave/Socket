@@ -20,6 +20,7 @@ typedef struct syninfo{
 	char *value;
 }syninfo;
 void recvData(int conn){
+		int status = 200;
 		int recvlen = 0;
 		int len = recv(conn, &recvlen, sizeof(int), 0);
 		//len = recv(conn,&recvlen,sizeof(int),0);
@@ -39,8 +40,9 @@ void recvData(int conn){
 
 		v = malloc(vLen);
 		memcpy(v,recvBuffer,vLen);
-
+	//	sleep(1);
 		printf("k:%s--v:%s\n",k,v);
+		send(conn,&status,sizeof(int),0);
 }
 void synEvent(){
 	syninfo syn;

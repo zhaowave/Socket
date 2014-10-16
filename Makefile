@@ -6,3 +6,5 @@ client.o:client.c
 	gcc -c client.c -lpthread
 readXmlFile.o:readXmlFile.c
 	gcc -c readXmlFile.c -I /usr/include/libxml2
+clean:
+	rm clientmain client.o readXmlFile.o

@@ -10,33 +10,6 @@
 #include<stdlib.h>
 #include<libxml/parser.h>
 #include"readXmlFile.h"
-int serverCount(){
-	int count = 0;
-	char *name = "serverip";
-	xmlDocPtr doc;
-	xmlNodePtr curNode;
-	char *szDocName = "Mem-conf.xml";
-	doc = xmlReadFile(szDocName,"GB2312",XML_PARSE_RECOVER);
-	curNode = xmlDocGetRootElement(doc);
-
-	curNode = curNode->xmlChildrenNode;
-	xmlNodePtr propNodePtr = curNode;
-	while(curNode != NULL){
-		if((!xmlStrcmp(curNode->name,(const xmlChar*)name))){
-			curNode = curNode->xmlChildrenNode;
-			break;
-		}
-		curNode = curNode->next;
-	}
-	while(curNode != NULL){
-		if((!xmlStrcmp(curNode->name,(const xmlChar*)"ip"))){
-			count++;
-		}
-		curNode = curNode->next;
-	}
-	xmlFreeDoc(doc);
-	return count;
-}
 void parseXml(char *name,int *count,char *ips){
 	xmlDocPtr doc;
 	xmlNodePtr curNode;
@@ -55,7 +28,7 @@ void parseXml(char *name,int *count,char *ips){
 		curNode = curNode->next;
 	}
 	while(curNode != NULL){
-		if((!xmlStrcmp(curNode->name,(const xmlChar*)"ip"))){
+		if((!xmlStrcmp(curNode->name,(const xmlChar*)"address"))){
 			strcat(szKey,(char*)xmlNodeGetContent(curNode));
 			strcat(szKey,"#");
 			(*count)++;
@@ -66,12 +39,9 @@ void parseXml(char *name,int *count,char *ips){
 		curNode = curNode->next;
 	}
 	xmlFreeDoc(doc);
-	//printf("---long ip is %s\n",szKey);
-//	return szKey;
-	
 }
 char *getServerAddress(int *count){
-	char *name = "serverip";
+	char *name = "server";
 	char *ips = malloc(100*sizeof(char)); 
 	parseXml(name,count,ips);
 	printf("ips:%s\n",ips);

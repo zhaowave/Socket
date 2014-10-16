@@ -9,6 +9,6 @@
 #include"client.h"
 int main(){
 	synByThreads();
-	sleep(1);
+	sleep(10);
 	return 0;
 }

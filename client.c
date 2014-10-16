@@ -9,6 +9,7 @@
 typedef struct syninfo{
 	char *key;
 	char *value;
+	char *address;
 }syninfo;
 void intToByte(char **buffer,int len){
 	int index = 0;
@@ -20,13 +21,14 @@ void intToByte(char **buffer,int len){
 }
 void *synMethod(void *arg){
 	printf("in synMethod\n");
+	int status;
 	char *serverAddr = (char*)arg;
 	char *ip,*port;
 	ip = strtok(serverAddr,":");
 	port = strtok(NULL,":");
-	char *k = "hellodjakfldjaklsfjd;las";
+	char *k = "hello";
 	char *v = "world";
-	syninfo *syn;
+	//syninfo *syn;
 	int kLen = strlen(k);
 	int vLen = strlen(v);
 	int len = kLen + vLen + 2*sizeof(int);
@@ -39,6 +41,7 @@ void *synMethod(void *arg){
 	bufferTemp += kLen;
 	intToByte(&bufferTemp,vLen);
 	memcpy(bufferTemp,v,vLen);
+	printf("address:%s ip:%s  port: %s\n",serverAddr,ip,port);
 
 	int client_sock = socket(AF_INET,SOCK_STREAM,0);
 	struct sockaddr_in server_address;
@@ -51,6 +54,12 @@ void *synMethod(void *arg){
 		exit(1);
 	}
 	send(client_sock, buffer,bytes,0);	
+	printf("status: %d\n",status);
+	//set a timer when send start
+	recv(client_sock,&status,sizeof(int),0);
+	printf("status: %d\n",status);
+	if(status == 200)
+		printf("recvd over\n");
 	close(client_sock);
 	return ((void*)0);
 }
@@ -74,6 +83,7 @@ void synByThreads(){
 		//if(err != 0) printf("pthread join err\n");
 		serverAddr = strtok(NULL,"#");
 	}
+//	free(ips);
 }
 //int main(){
 	//if(call change cache method)
