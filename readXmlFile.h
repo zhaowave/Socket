@@ -6,8 +6,9 @@
  ************************************************************************/
 #ifndef READXMLFILE_H
 #define READXMLFILE_H
+#include "synLink.h"
 int serverCount();
-void parseXml(char *name,int *count,char *ips);//
-char *getServerAddress(int *count);
+void parseXml(char *name,int *count,char *ips ,synLink **head);//
+synLink *getServerAddress(int *count);
 #endif
 

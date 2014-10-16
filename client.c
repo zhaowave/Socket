@@ -6,11 +6,7 @@
  ************************************************************************/
 
 #include"client.h"
-typedef struct syninfo{
-	char *key;
-	char *value;
-	char *address;
-}syninfo;
+synLink s;
 void intToByte(char **buffer,int len){
 	int index = 0;
 	for(index;index<4;index++){
@@ -20,12 +16,14 @@ void intToByte(char **buffer,int len){
 	}	
 }
 void *synMethod(void *arg){
+
 	printf("in synMethod\n");
-	int status;
-	char *serverAddr = (char*)arg;
-	char *ip,*port;
-	ip = strtok(serverAddr,":");
-	port = strtok(NULL,":");
+	int server_nums = 0;
+	//char *ips = getServerAddress(&server_nums);
+	synLink *s = getServerAddress(&server_nums);
+	//server_nums = 1;
+	int status = 0;
+	//char *ip = "127.0.0.1",*port = "9000";
 	char *k = "hello";
 	char *v = "world";
 	//syninfo *syn;
@@ -41,53 +39,64 @@ void *synMethod(void *arg){
 	bufferTemp += kLen;
 	intToByte(&bufferTemp,vLen);
 	memcpy(bufferTemp,v,vLen);
-	printf("address:%s ip:%s  port: %s\n",serverAddr,ip,port);
+//	printf("address: ip:%s  port: %s\n",ip,port);
+	int *client_sock = malloc(sizeof(int)*server_nums);
+	struct sockaddr_in *server_address = malloc(sizeof(struct sockaddr_in)*server_nums);
+	int num;
 
-	int client_sock = socket(AF_INET,SOCK_STREAM,0);
-	struct sockaddr_in server_address;
-	memset(&server_address,0,sizeof(server_address));
-	server_address.sin_family = AF_INET;
-	server_address.sin_port = htons(atoi(port));
-	server_address.sin_addr.s_addr = inet_addr(ip);
-	if(connect(client_sock,(struct sockaddr*)&server_address,sizeof(server_address)) < 0){
-		perror("connect fail\n");
-		exit(1);
+	synLink *syn;
+	for(num = 0;num<server_nums;num++){
+		printf("%d times go in\n",num);
+		client_sock[num] = socket(AF_INET,SOCK_STREAM,0);
+		memset(&server_address[num],0,sizeof(server_address[num]));
+		server_address[num].sin_family = AF_INET;
+		if(!isEmpty(s)){
+			syn = getNode(s);
+		}
+		char *ip = syn->ipaddr;
+		char *port = syn->port;
+		delNode(&s);
+		printf("after del\n");
+		printNode(s);
+		printf("connect server addr ip  %s port %s\n",ip,port);
+		server_address[num].sin_port = htons(atoi(port));
+		server_address[num].sin_addr.s_addr = inet_addr(ip);
+		if(connect(client_sock[num],(struct sockaddr*)&server_address[num],sizeof(server_address[num])) < 0){
+			perror("connect fail\n");
+			//exit(1);
+		}
+		send(client_sock[num], buffer,bytes,0);	
+		printf("status: %d\n",status);
+		//set a timer when send start
+		recv(client_sock[num],&status,sizeof(int),0);
+		printf("status: %d\n",status);
+		if(status == 200){
+			printf("recvd over\n");
+			status = 0;
+		}
 	}
-	send(client_sock, buffer,bytes,0);	
-	printf("status: %d\n",status);
-	//set a timer when send start
-	recv(client_sock,&status,sizeof(int),0);
-	printf("status: %d\n",status);
-	if(status == 200)
-		printf("recvd over\n");
-	close(client_sock);
+	for(num = 0;num<server_nums;num++){
+		close(client_sock[num]);
+	}
+	printf("exit tranfer\n");
 	return ((void*)0);
 }
 void synByThreads(){
-	int server_nums = 1;
+	//int server_nums = 1;
 	int n;
-	char *ips = getServerAddress(&server_nums);
-	pthread_t *p_serv = malloc(sizeof(pthread_t)*server_nums);
-	char *serverAddr;
-	serverAddr = strtok(ips,"#");
-	int i_serv = 0;
+	//char *ips = getServerAddress(&server_nums);
+	pthread_t send_thread;
+	//char *serverAddr;
+	//serverAddr = strtok(ips,"#");
+	//int i_serv = 0;
 	int *tret;
-	while(serverAddr != NULL){
-		printf("serverAddr : %s\n",serverAddr);
-		int err;
-		err = pthread_create(p_serv+i_serv,NULL,synMethod,serverAddr);
-		i_serv++;
-		if(err != 0) 
-			printf("create p_server error\n");
-		//err = pthread_join(*(p_serv+i_serv),&tret);
-		//if(err != 0) printf("pthread join err\n");
-		serverAddr = strtok(NULL,"#");
-	}
+	//printf("serverAddr : %s\n",serverAddr);
+	int err;
+	err = pthread_create(&send_thread,NULL,synMethod,NULL);
+	if(err != 0) 
+		printf("create p_server error\n");
+	err = pthread_join(send_thread,&tret);
+		if(err != 0) printf("pthread join err\n");
+	//serverAddr = strtok(NULL,"#");
 //	free(ips);
 }
-//int main(){
-	//if(call change cache method)
-//	synByThreads();
-//	sleep(1);
-//	return 0;
-//}

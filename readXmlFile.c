@@ -10,7 +10,8 @@
 #include<stdlib.h>
 #include<libxml/parser.h>
 #include"readXmlFile.h"
-void parseXml(char *name,int *count,char *ips){
+#include "synLink.h"
+void parseXml(char *name,int *count,char *ips ,synLink **head){
 	xmlDocPtr doc;
 	xmlNodePtr curNode;
 	char *szKey = ips;// malloc(sizeof(char)*100);
@@ -27,11 +28,13 @@ void parseXml(char *name,int *count,char *ips){
 		}
 		curNode = curNode->next;
 	}
+	synLink *h = *head;
 	while(curNode != NULL){
 		if((!xmlStrcmp(curNode->name,(const xmlChar*)"address"))){
 			strcat(szKey,(char*)xmlNodeGetContent(curNode));
 			strcat(szKey,"#");
 			(*count)++;
+			h = insertNode(h,(char*)xmlNodeGetContent(curNode));
 			//szKey = xmlNodeGetContent(curNode);
 			//printf("ip:%s\n",szKey);
 			//xmlFree(szKey);
@@ -40,10 +43,15 @@ void parseXml(char *name,int *count,char *ips){
 	}
 	xmlFreeDoc(doc);
 }
-char *getServerAddress(int *count){
+synLink *getServerAddress(int *count){
 	char *name = "server";
+	synLink *head = (synLink*)malloc(sizeof(synLink)); 
 	char *ips = malloc(100*sizeof(char)); 
-	parseXml(name,count,ips);
-	printf("ips:%s\n",ips);
-	return ips;
+	parseXml(name,count,ips,&head);
+
+	printNode(head);
+
+//	printf("ips:%s\n",ips);
+	return head;
+	//return ips;
 }
