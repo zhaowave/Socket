@@ -27,7 +27,7 @@ typedef struct ws{
 	pthread_mutex_t c_lock;
 }ws;
 void intToByte(char **buffer,int len);
-void *synMethod(void *arg);
+void synMethod(char *key,char *val);
 void synByThread();
 
 

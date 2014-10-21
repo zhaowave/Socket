@@ -49,7 +49,7 @@ synLink *getServerAddress(int *count){
 	char *ips = malloc(100*sizeof(char)); 
 	parseXml(name,count,ips,&head);
 
-	printNode(head);
+//	printNode(head);
 
 //	printf("ips:%s\n",ips);
 	return head;

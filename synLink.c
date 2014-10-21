@@ -73,7 +73,17 @@ void delNode(synLink **h){
 		printf("empty link couldn't delNode\n");
 		return;
 	}
-	*h = (*h)->next;
+	synLink *del = (*h)->next;
+	(*h)->next = del->next;
+	free(del);
+}
+void jumpANode(synLink **h){
+	//synLink *temp = (*h)->next;
+//	printf("int jump\n");
+//	printf("%d\n",*h);
+	(*h) = (*h)->next;
+//	printf("%d\n",*h);
+	
 }
 /*
 int main(){

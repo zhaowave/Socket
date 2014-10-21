@@ -41,7 +41,7 @@ void recvData(int conn){
 		v = malloc(vLen);
 		memcpy(v,recvBuffer,vLen);
 	//	sleep(1);
-		printf("k:%s--v:%s\n",k,v);
+		printf("k:%s\nv:%s\n",k,v);
 		send(conn,&status,sizeof(int),0);
 }
 void synEvent(){

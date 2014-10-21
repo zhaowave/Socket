@@ -24,4 +24,5 @@ void printNode(synLink *head);
 int isEmpty(synLink *h);
 synLink *getNode(synLink *h);
 void delNode(synLink **h);
+void jumpANode(synLink **h);
 #endif
